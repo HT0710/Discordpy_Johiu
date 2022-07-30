@@ -1,7 +1,6 @@
 import discord
 import os
 from discord.ext import commands
-from TOKEN import TOKEN
 from websever import keep_alive
 from cogs.music import Music
 
@@ -80,5 +79,5 @@ async def setup():
 
 keep_alive()
 client.loop.create_task(setup())
-client.run(TOKEN)
+client.run(os.environ['TOKEN'])
 # https://discord.com/api/oauth2/authorize?client_id=912789977153282109&permissions=8&scope=bot
