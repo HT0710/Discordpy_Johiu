@@ -2,7 +2,7 @@ import discord
 import os
 from discord.ext import commands
 from TOKEN import TOKEN
-from websever import keep_alive
+# from websever import keep_alive
 from cogs.music import Music
 
 client = commands.Bot(command_prefix=';', intents=discord.Intents.all(), help_command=None)
@@ -78,7 +78,7 @@ async def setup():
     client.add_cog(Music(client))
 
 
-keep_alive()
+# keep_alive()
 client.loop.create_task(setup())
 client.run(TOKEN)
 # https://discord.com/api/oauth2/authorize?client_id=912789977153282109&permissions=8&scope=bot

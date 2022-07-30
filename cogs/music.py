@@ -1,6 +1,7 @@
 import asyncio
 import youtube_dl
 import discord
+import ffmpeg
 from discord.ext import commands
 
 client = commands.Bot(command_prefix=';', intents=discord.Intents.all(), help_command=None)
@@ -215,12 +216,12 @@ class Music(commands.Cog):
             if self.loop[self.channel_id]['1'] == 'False':
                 await ctx.send('Hiện loop đang **`Tắt\off`**')
             else:
-                await ctx.send('Hiện loop đang **`Bật\on`**')
+                await ctx.send(f"Hiện loop đang **`Bật\on`**")
         else:
             if sub == 'on':
                 await ctx.message.add_reaction('🔂')
                 self.loop[self.channel_id]['1'] = 'True'
-                embed = discord.Embed(title='Bắt đầu loop...', colour=discord.Colour.purple())
+                embed = discord.Embed(title=f"Bắt đầu loop! - [{self.current[self.channel_id]['s']}]({self.current[self.channel_id]['d']})", colour=discord.Colour.purple())
                 return await ctx.send(embed=embed)
             elif sub == 'off':
                 await ctx.message.add_reaction('❌')
@@ -262,7 +263,7 @@ class Music(commands.Cog):
             return await ctx.send("Có đang play gì đâu?")
 
         await ctx.message.add_reaction('🆗')
-        await ctx.send(f'Đang phát hiện tại: {self.current[self.channel_id]["d"]}')
+        await ctx.send(f"Đang phát hiện tại: [{self.current[self.channel_id]['s']}]({self.current[self.channel_id]['d']})")
 
     @commands.command(aliases=['search', 'f'])
     async def jsearch(self, ctx, *, song=None):
@@ -446,9 +447,9 @@ class Music(commands.Cog):
                             break
                     elif (voice.is_playing() is False) and (voice.is_paused() is False):
                         if self.loop[self.channel_id]['1'] == 'True':
-                            await self.play_song(member, self.current[self.channel_id]["d"])
+                            await self.play_song(member, self.current[self.channel_id]['d'])
                             await self.client.get_channel(self.channel_id).send(
-                                f'Now playing: {self.current[self.channel_id]["d"]}')
+                                f"Now playing: {self.current[self.channel_id]['d']}")
 
                         elif len(self.song_queue[member.guild.id]) > 0 or self.loop[self.channel_id]['q'] == 'True':
                             await self.check_queue(member)
@@ -468,5 +469,5 @@ class Music(commands.Cog):
                                 await voice.disconnect()
                                 break
 
-                    if voice.is_connected == False:
+                    if not voice.is_connected:
                         break

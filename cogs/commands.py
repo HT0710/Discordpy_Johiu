@@ -4,7 +4,7 @@ from discord.ext import commands
 client = commands.Bot(command_prefix=';', intents=discord.Intents.all(), help_command=None)
 
 shelp1 = [
-    'new', 'nickname', 'info', 'weather', 'dog', 'cat'
+    'new', 'nickname', 'info', 'weather', 'dog', 'cat', 'fng'
 ]
 
 shelp2 = [
@@ -45,7 +45,8 @@ class Command(commands.Cog):
 
             fields = [
                 ('1️⃣  > **Hành động**',
-                 f'`{shelp1[0]}`, `{shelp1[1]}`, `{shelp1[2]}`, `{shelp1[3]}`, `{shelp1[4]}`, `{shelp1[5]}`', False),
+                 f'`{shelp1[0]}`, `{shelp1[1]}`, `{shelp1[2]}`, `{shelp1[3]}`, `{shelp1[4]}`, `{shelp1[5]}`, `{shelp1[6]}`',
+                 False),
                 ('2️⃣  > **Phát nhạc youtube**',
                  f'`{shelp2[0]}`, `{shelp2[1]}`, `{shelp2[2]}`, `{shelp2[3]}`, `{shelp2[4]}`, `{shelp2[5]}`, `{shelp2[6]}`, `{shelp2[7]}`, `{shelp2[8]}`, `{shelp2[9]}`, `{shelp2[10]}`, `{shelp2[11]}`',
                  False)
@@ -70,7 +71,8 @@ class Command(commands.Cog):
                  '- Viết tắt: **`wt`** - Thời tiết hiện tại của tp.HCM\nLựa chọn:\n- **`wt daily`**: Xem dự báo thời tiết 5 ngày từ hôm nay',
                  False),
                 ('**`dog`**', '- Một tấm ảnh chó ngẫu nhiên', False),
-                ('**`cat`**', '- Một tấm ảnh mèo ngẫu nhiên', False)
+                ('**`cat`**', '- Một tấm ảnh mèo ngẫu nhiên', False),
+                ('**`fng`**', '- Show Bitcoin Fear & Greed', False),
             ]
 
             for name, value, inline in fields:
