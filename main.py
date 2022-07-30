@@ -4,7 +4,9 @@ from discord.ext import commands
 from TOKEN import TOKEN
 from websever import keep_alive
 from cogs.music import Music
+
 client = commands.Bot(command_prefix=';', intents=discord.Intents.all(), help_command=None)
+
 
 @client.event
 async def on_ready():
@@ -12,10 +14,12 @@ async def on_ready():
     await client.change_presence(activity=discord.Activity(
         type=discord.ActivityType.listening, name='🎵 | ;help'))
 
+
 @client.listen()
 async def on_message(message):
     if client.user.mentioned_in(message):
         await message.channel.send("Ông trùm Johíu thích nghe nhạc\n**`;help`**: để biết thêm thông tin")
+
 
 """
 Các chức năng đang có hiện tại
@@ -57,7 +61,7 @@ Feature:
             # Auto leave sau 10 phút nếu tạm dừng (pause) và 5 phút nếu dừng(stop)
         ***
             
-"""    
+"""
 
 initial_extensions = []
 for filename in os.listdir('./cogs'):
@@ -67,6 +71,7 @@ for filename in os.listdir('./cogs'):
 if __name__ == '__main__':
     for extension in initial_extensions:
         client.load_extension(extension)
+
 
 async def setup():
     await client.wait_until_ready()

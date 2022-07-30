@@ -6,77 +6,77 @@ import json
 import datetime
 from tinydb import TinyDB, Query
 
-
 client = commands.Bot(command_prefix=';', intents=discord.Intents.all(), help_command=None)
 
 db = TinyDB('cogs/wtlist.json')
 User = Query()
 
+
 class API(commands.Cog):
     def __init__(self, client):
         self.client = client
         self.wtdata = {
-                'main': {
-                    'Rain': 'Có mưa',
-                    'Thunderstorm': 'Mưa dông',
-                    'Drizzle': 'Mưa phùn',
-                    'Clouds': 'Có mây',
-                    'Snow': 'Có tuyết',
-                    'Mist': 'Sương mỏng',
-                    'Smoke': 'Sương khói',
-                    'Haze': 'Sương bụi',
-                    'Dust': 'Bụi',
-                    'Fog': 'Sương mù',
-                    'Sand': 'Cát',
-                    'Ash': 'Tro',
-                    'Squall': 'Mưa đá',
-                    'Tornado': 'Lốc xoáy',
-                    'Clear': 'Trời đẹp',
-                },
+            'main': {
+                'Rain': 'Có mưa',
+                'Thunderstorm': 'Mưa dông',
+                'Drizzle': 'Mưa phùn',
+                'Clouds': 'Có mây',
+                'Snow': 'Có tuyết',
+                'Mist': 'Sương mỏng',
+                'Smoke': 'Sương khói',
+                'Haze': 'Sương bụi',
+                'Dust': 'Bụi',
+                'Fog': 'Sương mù',
+                'Sand': 'Cát',
+                'Ash': 'Tro',
+                'Squall': 'Mưa đá',
+                'Tornado': 'Lốc xoáy',
+                'Clear': 'Trời đẹp',
+            },
 
-                'description': {
-                    'thunderstorm with light rain': 'Giông bão có mưa nhẹ',
-                    'thunderstorm with rain': 'Giông bão có mưa',
-                    'thunderstorm with heavy rain': 'Giông bão có mưa nặng hạt',
-                    'light thunderstorm': 'Giông bão nhẹ',
-                    'thunderstorm': 'Dông',
-                    'heavy thunderstorm': 'Giông bão lớn',
-                    'ragged thunderstorm': 'Giông bão',
-                    'thunderstorm with light drizzle': 'Giông bão với mưa phùn nhẹ',
-                    'thunderstorm with drizzle': 'Giông bão với mưa phùn',
-                    'thunderstorm with heavy drizzle': 'Giông bão với mưa phùn lớn',
+            'description': {
+                'thunderstorm with light rain': 'Giông bão có mưa nhẹ',
+                'thunderstorm with rain': 'Giông bão có mưa',
+                'thunderstorm with heavy rain': 'Giông bão có mưa nặng hạt',
+                'light thunderstorm': 'Giông bão nhẹ',
+                'thunderstorm': 'Dông',
+                'heavy thunderstorm': 'Giông bão lớn',
+                'ragged thunderstorm': 'Giông bão',
+                'thunderstorm with light drizzle': 'Giông bão với mưa phùn nhẹ',
+                'thunderstorm with drizzle': 'Giông bão với mưa phùn',
+                'thunderstorm with heavy drizzle': 'Giông bão với mưa phùn lớn',
 
-                    'light intensity drizzle': 'Mưa phùn nhẹ',
-                    'light intensity drizzle rain': 'Mưa phùn nhẹ',
-                    'heavy intensity drizzle': 'Mưa phùn lớn',
-                    'drizzle': 'Mưa phùn',
-                    'drizzle rain': 'Mưa phùn',
-                    'heavy intensity drizzle rain': 'Mưa phùn lớn',
-                    'shower rain and drizzle': 'Mưa rào và mưa phùn',
-                    'heavy shower rain and drizzle': 'Mưa rào và mưa phùn lớn',
-                    'shower drizzle': 'Mưa phùn vừa',
+                'light intensity drizzle': 'Mưa phùn nhẹ',
+                'light intensity drizzle rain': 'Mưa phùn nhẹ',
+                'heavy intensity drizzle': 'Mưa phùn lớn',
+                'drizzle': 'Mưa phùn',
+                'drizzle rain': 'Mưa phùn',
+                'heavy intensity drizzle rain': 'Mưa phùn lớn',
+                'shower rain and drizzle': 'Mưa rào và mưa phùn',
+                'heavy shower rain and drizzle': 'Mưa rào và mưa phùn lớn',
+                'shower drizzle': 'Mưa phùn vừa',
 
-                    'rain and drizzle': 'Mưa bụi và mưa phùn',
+                'rain and drizzle': 'Mưa bụi và mưa phùn',
 
-                    'light rain': 'Mưa nhẹ',
-                    'moderate rain': 'Mưa vừa',
-                    'heavy intensity rain': 'Mưa nặng hạt',
-                    'very heavy rain': 'Mưa rất lớn',
-                    'extreme rain': 'Mưa cực lớn',
-                    'freezing rain': 'Mưa tuyết',
-                    'light intensity shower rain': 'Mưa rào nhẹ',
-                    'shower rain': 'Mưa rào',
-                    'heavy intensity shower rain': 'Mưa rào lớn',
-                    'ragged shower rain	': 'Mưa rào theo đợt',
+                'light rain': 'Mưa nhẹ',
+                'moderate rain': 'Mưa vừa',
+                'heavy intensity rain': 'Mưa nặng hạt',
+                'very heavy rain': 'Mưa rất lớn',
+                'extreme rain': 'Mưa cực lớn',
+                'freezing rain': 'Mưa tuyết',
+                'light intensity shower rain': 'Mưa rào nhẹ',
+                'shower rain': 'Mưa rào',
+                'heavy intensity shower rain': 'Mưa rào lớn',
+                'ragged shower rain	': 'Mưa rào theo đợt',
 
-                    'clear sky': 'Trời không mây',
-                    'few clouds': 'Ít mây',
-                    'scattered clouds': 'Mây rải rác',
-                    'broken clouds': 'Mây thưa thớt',
-                    'overcast clouds': 'Mây u ám',
-                }
-
+                'clear sky': 'Trời không mây',
+                'few clouds': 'Ít mây',
+                'scattered clouds': 'Mây rải rác',
+                'broken clouds': 'Mây thưa thớt',
+                'overcast clouds': 'Mây u ám',
             }
+
+        }
         self.day_info = {}
 
     async def get_time(self, time):
@@ -99,7 +99,6 @@ class API(commands.Cog):
         data = json.loads(get.text)
 
         return data
-
 
     async def get_dog(self):
         url = 'https://dog.ceo/api/breeds/image/random'
@@ -139,7 +138,7 @@ class API(commands.Cog):
         await asyncio.sleep(2)
         set1 = await self.get_time(daily['sunset'])
         set2 = set1.split(' ')[1].split(':')
-        sunset = f'{str(int(set2[0])+7)}:{set2[1]}'
+        sunset = f'{str(int(set2[0]) + 7)}:{set2[1]}'
 
         for data in self.wtdata['main']:
             if data == daily['weather'][0]['main']:
@@ -175,9 +174,9 @@ class API(commands.Cog):
         # chạy từ đầu, thêm 5 ngày tính từ hôm nay
         if db.search(User['day'] == today) == []:
 
-            db.truncate()   # xóa toàn bộ
+            db.truncate()  # xóa toàn bộ
 
-            for i in range(0, 5):    # thêm từ đầu tới 4 (wtinfo chạy từ 0)
+            for i in range(0, 5):  # thêm từ đầu tới 4 (wtinfo chạy từ 0)
                 await self.get_day_info(i)
                 db.insert(self.day_info)
 
@@ -187,20 +186,19 @@ class API(commands.Cog):
         else:
             for i in range(0, 5):
                 if db.all()[i]['day'] == today:
-                    order = i+1
+                    order = i + 1
 
-            available = 5 - order + 1    # số ngày đã có
-            final = 5 - available    # số ngày cần xóa và cần thêm
+            available = 5 - order + 1  # số ngày đã có
+            final = 5 - available  # số ngày cần xóa và cần thêm
 
-            remove = []     # trữ những id cần xóa
+            remove = []  # trữ những id cần xóa
             for i in range(final):  # xóa từ đầu tới final
-                remove.append(i+1)  # id bắt đầu từ 1 nên +1 vào (range chạy từ 0)
-            db.remove(doc_ids=remove)   # xóa các id đó
+                remove.append(i + 1)  # id bắt đầu từ 1 nên +1 vào (range chạy từ 0)
+            db.remove(doc_ids=remove)  # xóa các id đó
 
-            for i in range(available, 5):   # thêm từ số ngày đã có VD: đã có 3 thì thêm 3 4 (wtinfo chạy từ 0)
+            for i in range(available, 5):  # thêm từ số ngày đã có VD: đã có 3 thì thêm 3 4 (wtinfo chạy từ 0)
                 await self.get_day_info(i)
                 db.insert(self.day_info)
-
 
     @commands.command(aliases=['weather', 'wt'])
     async def jweather(self, ctx, sub=None):
@@ -251,8 +249,6 @@ class API(commands.Cog):
             get = await self.get_current_weather()
 
             embed = discord.Embed(title='Thời tiết **tp.HCM** hiện tại', colour=0xB5F4FF)
-
-
 
             main = get['weather'][0]['main']
             description = get['weather'][0]['description']
@@ -317,24 +313,23 @@ class API(commands.Cog):
         time = datetime.datetime.utcfromtimestamp(time).strftime('%Hh %Mm %Ss')
         des = color = get['data'][0]['value_classification']
         if color == 'Too Greedy':
-          color = discord.Color.dark_green()
+            color = discord.Color.dark_green()
         elif color == 'Greedy':
-          color = discord.Color.green()
+            color = discord.Color.green()
         elif color == 'Neutral':
-          color = discord.Color.gold()
+            color = discord.Color.gold()
         elif color == 'Fear':
-          color = discord.Color.orange()
+            color = discord.Color.orange()
         elif color == 'Extreme Fear':
-          color = discord.Color.red()
+            color = discord.Color.red()
         else:
-          color = discord.Color.dark_gray
-          
-        embed = discord.Embed(title='Feer & Greed',description=f"**{index} - {des}**" , color=color)
+            color = discord.Color.dark_gray
+
+        embed = discord.Embed(title='Feer & Greed', description=f"**{index} - {des}**", color=color)
         embed.set_image(url='https://alternative.me/crypto/fear-and-greed-index.png')
         embed.set_footer(text=f"Until next update:  {time}")
         await ctx.send(embed=embed)
 
 
-    
 def setup(client):
     client.add_cog(API(client))

@@ -5,6 +5,7 @@ from discord.ext import commands
 
 client = commands.Bot(command_prefix=';', intents=discord.Intents.all(), help_command=None)
 
+
 class Music(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -13,7 +14,6 @@ class Music(commands.Cog):
         self.current = {}
         self.loop = {}
         self.setup()
-
 
     def setup(self):
         for guild in self.client.guilds:
@@ -65,12 +65,15 @@ class Music(commands.Cog):
         if len(self.song_queue[ctx.guild.id]) > 0 or self.loop[self.channel_id]['q'] == 'True':
             if self.loop[self.channel_id]['q'] == 'False':
                 await self.play_song(ctx, self.song_queue[ctx.guild.id][0]['d'])
-                await self.client.get_channel(self.channel_id).send(f"Now playing: {self.song_queue[ctx.guild.id][0]['d']}")
+                await self.client.get_channel(self.channel_id).send(
+                    f"Now playing: {self.song_queue[ctx.guild.id][0]['d']}")
                 self.song_queue[ctx.guild.id].pop(0)
             else:
-                self.song_queue[ctx.guild.id].append({'s': self.current[self.channel_id]['s'], 'd': self.current[self.channel_id]['d']})
+                self.song_queue[ctx.guild.id].append(
+                    {'s': self.current[self.channel_id]['s'], 'd': self.current[self.channel_id]['d']})
                 await self.play_song(ctx, self.song_queue[ctx.guild.id][0]['d'])
-                await self.client.get_channel(self.channel_id).send(f"Now playing: {self.song_queue[ctx.guild.id][0]['d']}")
+                await self.client.get_channel(self.channel_id).send(
+                    f"Now playing: {self.song_queue[ctx.guild.id][0]['d']}")
                 self.song_queue[ctx.guild.id].pop(0)
 
     async def search_song(self, amount, song, get_url=False):
@@ -95,7 +98,7 @@ class Music(commands.Cog):
 
     @commands.command()
     async def test(self, ctx, sub=None):
-        pass
+        return await ctx.send(self.channel_id)
 
     @commands.command()
     async def join(self, ctx):
@@ -202,7 +205,7 @@ class Music(commands.Cog):
         ctx.voice_client.resume()
         await ctx.message.add_reaction('🆗')
         await ctx.send("Bài hát hiện tại đã được tiếp tục ▶️")
-        
+
     @commands.command(aliases=['loop', 'o'])
     async def jloop(self, ctx, sub=None):
         if ctx.voice_client is None:
@@ -361,15 +364,21 @@ class Music(commands.Cog):
 
         end = '' if len(self.song_queue[ctx.guild.id]) == 0 else '-----Next-----\n'
 
-        embed = discord.Embed(title="Danh sách phát", description=f"**`Now playing`** 🔸 [{self.current[self.channel_id]['s']}]({self.current[self.channel_id]['d']}) 🔹\n{end}", colour=discord.Colour.dark_gold())
+        embed = discord.Embed(title="Danh sách phát",
+                              description=f"**`Now playing`** 🔸 [{self.current[self.channel_id]['s']}]({self.current[self.channel_id]['d']}) 🔹\n{end}",
+                              colour=discord.Colour.dark_gold())
 
         i = 1
         for info in self.song_queue[ctx.guild.id]:
             embed.description += f"**{i}** > [{info['s']}]({info['d']})\n"
             i += 1
 
-        embed.add_field(name='Lặp một bài ', value=f'{"**`Tắt/off`** ❌" if self.loop[self.channel_id]["1"] == "False" else "**`Bật/on`** 🔂"}', inline=True)
-        embed.add_field(name=' Lặp danh sách phát', value=f'{"**`Tắt/off`** ❌" if self.loop[self.channel_id]["q"] == "False" else "**`Bật/on`** 🔁"}', inline=True)
+        embed.add_field(name='Lặp một bài ',
+                        value=f'{"**`Tắt/off`** ❌" if self.loop[self.channel_id]["1"] == "False" else "**`Bật/on`** 🔂"}',
+                        inline=True)
+        embed.add_field(name=' Lặp danh sách phát',
+                        value=f'{"**`Tắt/off`** ❌" if self.loop[self.channel_id]["q"] == "False" else "**`Bật/on`** 🔁"}',
+                        inline=True)
         embed.set_footer(text=f"Số lượng: [ {len(self.song_queue[ctx.guild.id])} ]")
         await ctx.send(embed=embed)
 
@@ -437,8 +446,9 @@ class Music(commands.Cog):
                             break
                     elif (voice.is_playing() is False) and (voice.is_paused() is False):
                         if self.loop[self.channel_id]['1'] == 'True':
-                            await self.play_song(member, self.current[self.channel_id]['d'])
-                            await self.client.get_channel(self.channel_id).send(f"Now playing: {self.current[self.channel_id]['d']}")
+                            await self.play_song(member, self.current[self.channel_id]["d"])
+                            await self.client.get_channel(self.channel_id).send(
+                                f'Now playing: {self.current[self.channel_id]["d"]}')
 
                         elif len(self.song_queue[member.guild.id]) > 0 or self.loop[self.channel_id]['q'] == 'True':
                             await self.check_queue(member)
@@ -460,4 +470,3 @@ class Music(commands.Cog):
 
                     if voice.is_connected == False:
                         break
-
