@@ -3,7 +3,9 @@
 - Johíu
 
 <img src="logo.png" width="100" height="100"/>
+
 ---
+
 - Multi-feature
 - Music bot
 - Updating
