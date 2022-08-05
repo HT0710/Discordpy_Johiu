@@ -1,13 +1,16 @@
 # DiscordBot_Johiu
 
 - Johíu
-  <img src="logo.png" width="100" height="100"/>
 
+<img src="logo.png" width="100" height="100"/>
+---
 - Multi-feature
 - Music bot
 - Updating
 
 ## Hosting
+
+### [Replit](https://replit.com/)
 
 ### [UptimeRobot](https://uptimerobot.com/)
 
