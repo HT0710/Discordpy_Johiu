@@ -17,6 +17,10 @@ async def on_ready():
 
 @client.listen()
 async def on_message(message):
+    if message.content.startswith(";"):
+        print(
+            f"{message.author.name} from {message.guild.name} has used command {message.content}")
+
     if client.user.mentioned_in(message):
         await message.channel.send(
             "Ông trùm Johíu thích nghe nhạc\n**`;help`**: để biết thêm thông tin"
@@ -81,5 +85,5 @@ async def setup():
 
 
 client.loop.create_task(setup())
-client.run(os.environ['TOKEN'])
+client.run('OTEyNzg5OTc3MTUzMjgyMTA5.G1oOQ9.jJ0sooAJrOyQ1RuEL9Q3yhx7JBt9mJrKEJlctw')
 # https://discord.com/api/oauth2/authorize?client_id=912789977153282109&permissions=8&scope=bot
