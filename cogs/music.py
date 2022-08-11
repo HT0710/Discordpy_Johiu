@@ -1,5 +1,6 @@
-import asyncio, youtube_dl, discord
-# import PyNaCl, ffmpeg
+import asyncio
+import youtube_dl
+import discord
 import random
 
 from discord.ext import commands
@@ -102,7 +103,8 @@ class Music(commands.Cog):
         ).send(f"Now playing: {self.song_queue[ctx.guild.id][id]['d']}")
         self.song_queue[ctx.guild.id].pop(id)
         if not self.song_queue[ctx.guild.id]:
-            embed = discord.Embed(title='Đang phát bài hát cuối cùng!', colour=discord.Color.dark_grey())
+            embed = discord.Embed(
+                title='Đang phát bài hát cuối cùng!', colour=discord.Color.dark_grey())
             await self.client.get_channel(self.channel_id).send(embed=embed)
 
     async def search_song(self, amount, song, get_url=False):
@@ -133,10 +135,10 @@ class Music(commands.Cog):
             source = await discord.FFmpegOpusAudio.from_probe(
                 url2, **FFMPEG_OPTIONS)
             try:
-              self.previous[ctx.guild.id] = True
-              ctx.guild.voice_client.play(source)
+                self.previous[ctx.guild.id] = True
+                ctx.guild.voice_client.play(source)
             except:
-              pass
+                pass
 
     @commands.command()
     async def test(self, ctx, sub=None):
@@ -191,7 +193,7 @@ class Music(commands.Cog):
                 return await ctx.send(
                     "Hiện có bài đang phát, playlist sẽ được thêm vào cuối danh sách phát!"
                 )
-              
+
             return setup()
 
         # handle song where song isn't url
@@ -509,8 +511,7 @@ class Music(commands.Cog):
 
         embed = discord.Embed(
             title=f"Kết quả cho '{song}':",
-            description=
-            "*Lấy link(url) trực tiếp từ tên bài hát nếu không phải là bài đầu tiên.*\n",
+            description="*Lấy link(url) trực tiếp từ tên bài hát nếu không phải là bài đầu tiên.*\n",
             colour=discord.Colour.red())
 
         amount = 0
@@ -534,8 +535,7 @@ class Music(commands.Cog):
 
         await ctx.message.add_reaction('🆗')
         poll = discord.Embed(
-            title=
-            f"Vote to Skip Song by - {ctx.author.name}#{ctx.author.discriminator}",
+            title=f"Vote to Skip Song by - {ctx.author.name}#{ctx.author.discriminator}",
             description="**__60%__ của voice channel đồng ý để skip.**",
             colour=discord.Colour.blue())
         poll.add_field(name="Skip", value=":white_check_mark:")
@@ -612,8 +612,7 @@ class Music(commands.Cog):
 
         embed = discord.Embed(
             title="**Danh sách phát**",
-            description=
-            f"**`Now playing`** 🔸 **[ [{self.current[self.channel_id]['s']}]({self.current[self.channel_id]['d']}) ]** 🔹\n{end}",
+            description=f"**`Now playing`** 🔸 **[ [{self.current[self.channel_id]['s']}]({self.current[self.channel_id]['d']}) ]** 🔹\n{end}",
             colour=0x0dff00)
 
         i = 1
@@ -623,18 +622,15 @@ class Music(commands.Cog):
 
         embed.add_field(
             name='Lặp một bài ',
-            value=
-            f'{"**`Tắt/off`** ❌" if self.loop[self.channel_id]["1"] == False else "**`Bật/on`** 🔂"}',
+            value=f'{"**`Tắt/off`** ❌" if self.loop[self.channel_id]["1"] == False else "**`Bật/on`** 🔂"}',
             inline=True)
         embed.add_field(
             name=' Random',
-            value=
-            f'{"**`Tắt/off`** ❌" if self.loop[self.channel_id]["r"] == False else "**`Bật/on`** 🔀"}',
+            value=f'{"**`Tắt/off`** ❌" if self.loop[self.channel_id]["r"] == False else "**`Bật/on`** 🔀"}',
             inline=True)
         embed.add_field(
             name=' Lặp danh sách phát',
-            value=
-            f'{"**`Tắt/off`** ❌" if self.loop[self.channel_id]["q"] == False else "**`Bật/on`** 🔁"}',
+            value=f'{"**`Tắt/off`** ❌" if self.loop[self.channel_id]["q"] == False else "**`Bật/on`** 🔁"}',
             inline=True)
         embed.set_footer(
             text=f"Số lượng: [ {len(self.song_queue[ctx.guild.id])} ]")
@@ -690,7 +686,7 @@ class Music(commands.Cog):
             voice = after.channel.guild.voice_client
             while True:
                 while True:
-                    await asyncio.sleep(5)
+                    await asyncio.sleep(3)
                     if (voice.is_playing() is False) and (voice.is_paused() is True):
                         a = 0
                         for i in range(900):
@@ -717,13 +713,18 @@ class Music(commands.Cog):
                             )
 
                         elif len(self.song_queue[member.guild.id]) > 0:
-                            await asyncio.sleep(1)
+                            await asyncio.sleep(3)
+                            if voice.is_playing():
+                                continue
                             await self.check_queue(member)
 
                         else:
-                            await asyncio.sleep(1)
+                            await asyncio.sleep(3)
+                            if voice.is_playing():
+                                continue
                             if self.previous[member.guild.id]:
-                                embed = discord.Embed(title='Đã phát bài cuối cùng - Danh sách phát trống!', description='**` ;p [link or name]`**: để play | **` ;s [name]`**: để tìm thêm.', colour=discord.Color.dark_grey())
+                                embed = discord.Embed(title='Đã phát bài cuối cùng - Danh sách phát trống!',
+                                                      description='**` ;p [link or name]`**: để play | **` ;s [name]`**: để tìm thêm.', colour=discord.Color.dark_grey())
                                 await self.client.get_channel(self.channel_id).send(embed=embed)
                                 self.previous[member.guild.id] = False
                             self.current[self.channel_id] = {}
