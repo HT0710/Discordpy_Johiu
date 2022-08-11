@@ -82,29 +82,15 @@ class Music(commands.Cog):
             return
 
         if self.loop[self.channel_id]['q'] == True:
-            self.song_queue[ctx.guild.id].append({
-                's':
-                self.current[self.channel_id]['s'],
-                'd':
-                self.current[self.channel_id]['d'],
-                'mp4':
-                self.current[self.channel_id]['mp4']
-            })
+            self.song_queue[ctx.guild.id].append(self.current[self.channel_id])
 
         id = random.randint(
             0,
             len(self.song_queue[ctx.guild.id]) -
             1) if self.loop[self.channel_id]['r'] == True else 0
-        await self.play_song(ctx, self.song_queue[ctx.guild.id][id]['mp4'])
-        self.current[self.channel_id] = {
-            's': self.song_queue[ctx.guild.id][id]['s'],
-            'd': self.song_queue[ctx.guild.id][id]['d'],
-            'mp4': self.song_queue[ctx.guild.id][id]['mp4']
-        }
-        await self.client.get_channel(
-            self.channel_id
-        ).send(f"Now playing: {self.song_queue[ctx.guild.id][id]['d']}")
+        await self.play_song(ctx, self.song_queue[ctx.guild.id][id])
         self.song_queue[ctx.guild.id].pop(id)
+
         if not self.song_queue[ctx.guild.id]:
             embed = discord.Embed(
                 title='Đang phát bài hát cuối cùng!', colour=discord.Color.dark_grey())
@@ -124,7 +110,7 @@ class Music(commands.Cog):
         return [entry["webpage_url"]
                 for entry in info["entries"]] if get_url else info
 
-    async def play_song(self, ctx, url):
+    async def play_song(self, ctx, song):
         FFMPEG_OPTIONS = {
             'before_options':
             '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
@@ -133,15 +119,35 @@ class Music(commands.Cog):
         YDL_OPTIONS = {'format': 'bestaudio'}
 
         with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
-            info = ydl.extract_info(url, download=False)
+            def extract(x=0):
+                if x == 3:
+                    return None
+                try:
+                    info = ydl.extract_info(song['mp4'], download=False)
+                    return info
+                except:
+                    x += 1
+                    extract(x)
+
+            info = extract()
+            if info is None:
+                if not self.song_queue[ctx.guild.id]:
+                    return await self.client.get_channel(
+                        self.channel_id
+                    ).send(f"Current song is error! Change to other song or try again later.")
+                await self.client.get_channel(
+                    self.channel_id
+                ).send(f"Current song is error! Change to next song.")
+
             url2 = info['formats'][0]['url']
             source = await discord.FFmpegOpusAudio.from_probe(
                 url2, **FFMPEG_OPTIONS)
-            try:
-                self.previous[ctx.guild.id] = True
-                ctx.guild.voice_client.play(source)
-            except:
-                pass
+            self.previous[ctx.guild.id] = True
+            ctx.guild.voice_client.play(source)
+            await self.client.get_channel(
+                self.channel_id
+            ).send(f"Now playing: {song['d']}")
+            self.current[self.channel_id] = song
 
     @commands.command()
     async def test(self, ctx, sub=None):
@@ -176,6 +182,8 @@ class Music(commands.Cog):
         if "youtube.com/playlist?" in song:
             await ctx.send("Loading playlist...")
             await ctx.send("Longer playlist take more time")
+            pre_queue_len = len(
+                self.song_queue[ctx.guild.id])
 
             info = youtube_dl.YoutubeDL({
                 "format": "bestaudio",
@@ -194,8 +202,12 @@ class Music(commands.Cog):
 
             if ctx.voice_client.is_playing():
                 return await ctx.send(
-                    "Hiện có bài đang phát, playlist sẽ được thêm vào cuối danh sách phát!"
+                    f"Hiện có bài đang phát, playlist sẽ được thêm vào cuối danh sách phát! Tổng: **`{len(self.song_queue[ctx.guild.id])}`**"
                 )
+
+            await ctx.send(
+                f"{len(self.song_queue[ctx.guild.id])-pre_queue_len} bài hát được thêm vào danh sách phát! Tổng: **`{len(self.song_queue[ctx.guild.id])}`**."
+            )
 
             return setup()
 
@@ -236,15 +248,10 @@ class Music(commands.Cog):
         mp4 = info['formats'][0][
             'url'] if ".googlevideo.com/videoplayback" in info['formats'][0][
                 'url'] else info['formats'][0]['fragment_base_url']
-        await self.play_song(ctx, mp4)
-        self.current[self.channel_id] = {
-            's': info['title'],
-            'd': info['webpage_url'],
-            'mp4': mp4
-        }
-        await ctx.send(f'Now playing: {song}')
+        song = {"s": info['title'], "d": song, "mp4": mp4}
+        await self.play_song(ctx, song)
 
-    @commands.command(aliases=['fplay', 'fp'])
+    @ commands.command(aliases=['fplay', 'fp'])
     async def jforceplay(self, ctx, *, song=None):
         if song is None:
             embed = discord.Embed(
@@ -279,15 +286,7 @@ class Music(commands.Cog):
             try:
                 ctx.voice_client.stop()
                 self.loop[self.channel_id]['1'] = False
-                await self.play_song(ctx,
-                                     self.song_queue[ctx.guild.id][id]['mp4'])
-                self.current[self.channel_id] = {
-                    's': self.song_queue[ctx.guild.id][id]['s'],
-                    'd': self.song_queue[ctx.guild.id][id]['d'],
-                    'mp4': self.song_queue[ctx.guild.id][id]['mp4']
-                }
-                await ctx.send(
-                    f"Now playing: {self.song_queue[ctx.guild.id][id]['d']}")
+                await self.play_song(ctx, self.song_queue[ctx.guild.id][id])
                 return self.song_queue[ctx.guild.id].pop(id)
             except:
                 pass
@@ -304,21 +303,21 @@ class Music(commands.Cog):
 
             song = result[0]
 
-        ctx.voice_client.stop()
         info = youtube_dl.YoutubeDL({
             "format": "bestaudio",
             "quiet": True
         }).extract_info(song, download=False)
+        mp4 = info['formats'][0][
+            'url'] if ".googlevideo.com/videoplayback" in info['formats'][0][
+                'url'] else info['formats'][0]['fragment_base_url']
         self.loop[self.channel_id]['1'] = False
-        await self.play_song(ctx, info['formats'][0]['url'])
-        self.current[self.channel_id] = {
-            's': info['title'],
-            'd': info['webpage_url'],
-            'mp4': info['formats'][0]['url']
-        }
-        await ctx.send(f'Now playing: {song}')
+        song = {'s': info['title'],
+                'd': info['webpage_url'],
+                'mp4': mp4}
+        ctx.voice_client.stop()
+        await self.play_song(ctx, song)
 
-    @commands.command(aliases=['replay', 'rp'])
+    @ commands.command(aliases=['replay', 'rp'])
     async def jreplay(self, ctx):
         try:
             if ctx.author.voice is None:
@@ -339,10 +338,9 @@ class Music(commands.Cog):
         ctx.voice_client.stop()
         current = self.current[self.channel_id]
         self.loop[self.channel_id]['1'] = False
-        await self.play_song(ctx, current['mp4'])
-        await ctx.send(f"Replaying: {current['d']}")
+        await self.play_song(ctx, current)
 
-    @commands.command(aliases=['leave', 'l'])
+    @ commands.command(aliases=['leave', 'l'])
     async def jleave(self, ctx):
         if ctx.voice_client is not None:
             await ctx.message.add_reaction('🆗')
@@ -351,7 +349,7 @@ class Music(commands.Cog):
 
         await ctx.send("Có đang ở trong voice đâu?.")
 
-    @commands.command(aliases=['pause', 's'])
+    @ commands.command(aliases=['pause', 's'])
     async def jpause(self, ctx):
         if ctx.voice_client.is_paused():
             return await ctx.send("Đang dừng rồi mà?")
@@ -360,7 +358,7 @@ class Music(commands.Cog):
         await ctx.message.add_reaction('🆗')
         await ctx.send("Đã tạm dừng ⏸️")
 
-    @commands.command(aliases=['resume', 'r'])
+    @ commands.command(aliases=['resume', 'r'])
     async def jresume(self, ctx):
         if ctx.voice_client is None:
             return await ctx.send("Đã ở trong voice đâu?")
@@ -375,7 +373,7 @@ class Music(commands.Cog):
         await ctx.message.add_reaction('🆗')
         await ctx.send("Bài hát hiện tại đã được tiếp tục ▶️")
 
-    @commands.command(aliases=['loop', 'o'])
+    @ commands.command(aliases=['loop', 'o'])
     async def jloop(self, ctx, sub=None):
         if ctx.voice_client is None:
             return await ctx.send("Đã ở trong voice đâu?")
@@ -404,7 +402,7 @@ class Music(commands.Cog):
             else:
                 return await ctx.send("Sai lệnh! Thử lại xem")
 
-    @commands.command(aliases=['random', 'qr'])
+    @ commands.command(aliases=['random', 'qr'])
     async def queue_random(self, ctx, sub: str = None):
         if ctx.voice_client is None:
             return await ctx.send("Đã ở trong voice đâu?")
@@ -463,7 +461,7 @@ class Music(commands.Cog):
         return await ctx.send(embed=discord.Embed(
             title="Sai lệnh! Thử lại xem | **` ;help `**"))
 
-    @commands.command(aliases=['qloop', 'qo'])
+    @ commands.command(aliases=['qloop', 'qo'])
     async def jqueueloop(self, ctx, sub=None):
         if ctx.voice_client is None:
             return await ctx.send("Đã ở trong voice đâu?")
@@ -489,7 +487,7 @@ class Music(commands.Cog):
             else:
                 return await ctx.send("Sai lệnh! Thử lại xem")
 
-    @commands.command(aliases=['nowplaying', 'n'])
+    @ commands.command(aliases=['nowplaying', 'n'])
     async def jnowplaying(self, ctx):
         if ctx.voice_client is None:
             return await ctx.send("Đã ở trong voice đâu?")
@@ -502,7 +500,7 @@ class Music(commands.Cog):
             f"Now playing: **`{self.current[self.channel_id]['s']}`** ({self.current[self.channel_id]['d']})"
         )
 
-    @commands.command(aliases=['search', 'f'])
+    @ commands.command(aliases=['search', 'f'])
     async def jsearch(self, ctx, *, song=None):
         if song is None:
             return await ctx.send("Search gì mới được.")
@@ -525,7 +523,7 @@ class Music(commands.Cog):
         embed.set_footer(text=f"{amount} kết quả đầu tiên tìm được.")
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=['skip', 'k'])
+    @ commands.command(aliases=['skip', 'k'])
     async def jskip(self, ctx):
         if ctx.voice_client is None:
             return await ctx.send("Đã ở trong voice nào đâu?")
@@ -596,7 +594,7 @@ class Music(commands.Cog):
             self.loop[self.channel_id]['1'] = False
             await self.check_queue(ctx)
 
-    @commands.command(aliases=['queue', 'q'])
+    @ commands.command(aliases=['queue', 'q'])
     async def jqueue(self, ctx):  # display the current guilds queue
         try:
             if len(self.song_queue[ctx.guild.id]) == 0 and self.current[
@@ -639,7 +637,7 @@ class Music(commands.Cog):
             text=f"Số lượng: [ {len(self.song_queue[ctx.guild.id])} ]")
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=['clean_queue', 'cq'])
+    @ commands.command(aliases=['clean_queue', 'cq'])
     async def jclean_queue(self, ctx, *, sub=None):
         if sub is None:
             embed = discord.Embed(
@@ -661,6 +659,7 @@ class Music(commands.Cog):
 
         if sub == 'all':
             self.song_queue[ctx.guild.id].clear()
+            self.previous[ctx.guild.id] = False
             return await ctx.send('Đã xóa toàn bộ thành công')
 
         elif hyp > 0:
@@ -681,7 +680,7 @@ class Music(commands.Cog):
                     'Nhập cho đúng chứ. Lệnh **`help`** để biết thêm'
                 )  # lỗi nhập chữ, không int đc,...
 
-    @commands.Cog.listener()
+    @ commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
         if member.id != self.client.user.id:
             return
@@ -708,12 +707,7 @@ class Music(commands.Cog):
                         await asyncio.sleep(2)
                         if self.loop[self.channel_id]['1'] == True:
                             await self.play_song(
-                                member, self.current[self.channel_id]['mp4'])
-                            await self.client.get_channel(
-                                self.channel_id
-                            ).send(
-                                f"Now playing: {self.current[self.channel_id]['d']}"
-                            )
+                                member, self.current[self.channel_id])
 
                         elif len(self.song_queue[member.guild.id]) > 0:
                             await asyncio.sleep(3)
