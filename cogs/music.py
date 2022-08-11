@@ -78,7 +78,7 @@ class Music(commands.Cog):
                            )  # lỗi nhập chữ, không int đc,...
 
     async def check_queue(self, ctx):
-        if ctx.voice_client.is_playing():
+        if ctx.guild.voice_client.is_playing():
             return
 
         if self.loop[self.channel_id]['q'] == True:
