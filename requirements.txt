@@ -1,0 +1,9 @@
+discord
+asyncio
+requests
+json
+datetime
+tinydb
+PyNaCl
+ffmpeg
+youtube_dl

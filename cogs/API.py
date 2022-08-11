@@ -206,7 +206,7 @@ class API(commands.Cog):
             if sub == 'daily':
                 await ctx.send('Vài giây...', delete_after=10)
                 await self.check_wtlist()
-                embed = discord.Embed(title='Thời tiết tp.HCM >**5**< ngày từ hôm nay', colour=discord.Color.blue())
+                embed = discord.Embed(title='Thời tiết tp.HCM **5** ngày từ hôm nay', colour=discord.Color.blue())
                 embed.timestamp = datetime.datetime.utcnow()
                 await ctx.send(embed=embed)
                 await asyncio.sleep(0.5)

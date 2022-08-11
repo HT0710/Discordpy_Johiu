@@ -8,7 +8,7 @@ shelp1 = [
 ]
 
 shelp2 = [
-    'play', 'fplay', 'pause', 'resume', 'leave', 'skip', 'nowplaying', 'loop', 'qloop', 'search', 'queue', 'cqueue'
+    'play', 'fplay', 'replay', 'pause', 'resume', 'leave', 'skip', 'nowplaying', 'loop', 'qloop', 'random', 'search', 'queue', 'cqueue'
 ]
 
 
@@ -21,14 +21,17 @@ class Command(commands.Cog):
         embed = discord.Embed(title='Những update mới:',
                               description='**Chức năng**:\n'
                                           '1: Thả ảnh chó, mèo - lệnh cat, dog\n'
-                                          '2: Nâng cấp tính năng thời tiết - giờ đây có thể dự báo 5 ngày từ hôm nay - lệnh wt daily\n'
+                                          '2: Nâng cấp tính năng thời tiết - có thể dự báo 5 ngày gần nhất - lệnh wt daily\n'
                                           '**Phát nhạc**:\n'
-                                          '1: Nâng cấp danh sách phát dễ nhìn hơn\n'
-                                          '2: Lệnh để xem bài hát hiện đang phát - lệnh n\n'
-                                          '3: Lệnh xóa các bài hiện có trong danh sách phát theo nhiều cách khác nhau\n'
-                                          '4: Lệnh loop mới - loop bài hiện tại và loop danh sách phát\n'
-                                          '5: Lệnh play ưu tiên, bỏ qua và phát thay bài hiện tại, ko làm ảnh hưởng danh sách phát - lệnh fp\n'
-                                          '- Mọi chi tiết khác xem qua lệnh **`help`**',
+                                          '1: Nâng cấp giao diện\n'
+                                          '2: Có thể phát được playlist! - ;p [link-playlist]\n'
+                                          '3: Lệnh để xem bài hát đang phát hiện tại - ;n\n'
+                                          '4: Lệnh xóa các bài hiện có trong danh sách phát theo nhiều cách - ;cq\n'
+                                          '5: Lệnh loop - loop bài hiện tại và loop danh sách phát - ;o và ;qo\n'
+                                          '6: Lệnh play ưu tiên, bỏ qua và phát thay bài hiện tại, ko làm ảnh hưởng danh sách phát - ;fp\n'
+                                          '7: Lệnh replay phát lại bài hát hiện tại - ;rp\n'
+                                          '8: Lệnh random, ngẫu nhiên phát bài trong danh sách phát - ;qr on | ;qr off\n'
+                                          '- Chi tiết xem qua lệnh **`help`**',
                               colour=discord.Colour.blue())
 
         await ctx.send(embed=embed)
@@ -48,7 +51,7 @@ class Command(commands.Cog):
                  f'`{shelp1[0]}`, `{shelp1[1]}`, `{shelp1[2]}`, `{shelp1[3]}`, `{shelp1[4]}`, `{shelp1[5]}`, `{shelp1[6]}`',
                  False),
                 ('2️⃣  > **Phát nhạc youtube**',
-                 f'`{shelp2[0]}`, `{shelp2[1]}`, `{shelp2[2]}`, `{shelp2[3]}`, `{shelp2[4]}`, `{shelp2[5]}`, `{shelp2[6]}`, `{shelp2[7]}`, `{shelp2[8]}`, `{shelp2[9]}`, `{shelp2[10]}`, `{shelp2[11]}`',
+                 f'`{shelp2[0]}`, `{shelp2[1]}`, `{shelp2[2]}`, `{shelp2[3]}`, `{shelp2[4]}`, `{shelp2[5]}`, `{shelp2[6]}`, `{shelp2[7]}`, `{shelp2[8]}`, `{shelp2[9]}`, `{shelp2[10]}`, `{shelp2[11]}`, `{shelp2[12]}`, `{shelp2[13]}`',
                  False)
             ]
 
@@ -87,10 +90,11 @@ class Command(commands.Cog):
 
             fields = [
                 ('**`play`**',
-                 '- Viết tắt: **`p`** \n- Auto join và play\n- Có thể play được link và tên\n- Play theo tên sẽ play kết quả đầu tiên tìm được trong search\n- Lưu ý hiện tại **không** play được __playlist__ hay là __stream - live__',
+                 '- Viết tắt: **`p`** \n- Auto join và play\n- Có thể play được bằng link và tên\n- Play được cả playlist!\n- Play theo tên sẽ phát kết quả đầu tiên tìm được',
                  False),
                 ('**`fplay`**', '- Viết tắt: **`fp`** \n- Ngắt bài hát hiện hại và play bài ưu tiên ngay lập tức',
                  False),
+                ('**`replay`**', '- Viết tắt: **`rp`** \n- Phát lại bài hát hiện tại', False),
                 ('**`pause`**', '- Viết tắt: **`s`** \n- Tạm dừng bài hát hiện tại', False),
                 ('**`remuse`**', '- Viết tắt: **`r`** \n- Tiếp tục bài hát hiện tại', False),
                 ('**`leave`**', '- Viết tắt: **`l`** \n- Đuổi Johíu khỏi voice', False),
@@ -102,6 +106,7 @@ class Command(commands.Cog):
                 ('**`qloop`**',
                  '- Viết tắt: **`qo`**\n- Xem danh sách phát có đang lặp hay ko\n- Lựa chọn:\n- **`qo on`**: Lặp toàn bộ danh sách phát hiện tại\n- **`qo off`**: Tắt loop',
                  False),
+                ('**`random`**', '- Viết tắt: **`qr`** \n- Phát ngẫu nhiên danh sách phát\n- **`qr on`**: để bật\n- **`qr off`**: để tắt', False),
                 ('**`search`**', '- Viết tắt: **`f`** \n- Tìm kiếm bài hát', False),
                 ('**`queue`**', '- Viết tắt: **`q`** \n- Danh sách phát hiện tại', False),
                 ('**`cqueue`**',
