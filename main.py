@@ -85,5 +85,5 @@ async def setup():
 
 
 client.loop.create_task(setup())
-client.run('OTEyNzg5OTc3MTUzMjgyMTA5.G1oOQ9.jJ0sooAJrOyQ1RuEL9Q3yhx7JBt9mJrKEJlctw')
+client.run(os.environ['TOKEN'])
 # https://discord.com/api/oauth2/authorize?client_id=912789977153282109&permissions=8&scope=bot
